@@ -1,0 +1,22 @@
+{% extends "layout.html" %} {% block title %}
+<title>Find your interesting book |Central library - Welcome</title>
+{% endblock title %} {% block content %}
+<div class="card" style="width: 25rem">
+  <div class="card-header">Overview</div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      <strong>Total Number of Books: </strong>{{total_books}}
+    </li>
+    <li class="list-group-item">
+      <strong>Total Number of Authors: </strong>{{total_authors}}
+    </li>
+    <li class="list-group-item">
+      <strong>Total Number of Books Copies: </strong>{{total_books_copies}}
+    </li>
+    <li class="list-group-item">
+      <strong>Total Number of Available Books Copies: </strong
+      >{{book_instance_available_count}}
+    </li>
+  </ul>
+</div>
+{% endblock content %}
