@@ -1,0 +1,46 @@
+{% extends "layout.html" %} {% block content %}
+<div class="card">
+  <div class="card-header">
+    <strong>Book #{{ book.id }}</strong>
+  </div>
+  <div class="card-body">
+    <h2 class="card-title d-inline">{{ book.title }}</h2>
+    <p class="">
+      <strong>Author Name:</strong>
+      <em><a href="#">{{ book.author }}</a></em>
+    </p>
+    <p class="card-text"><strong>Language:</strong> {{ book.language }}</p>
+    <p>
+      <strong>Genre:</strong>
+      {% for genre in book.genre.all %}
+      <span class="badge bg-primary">{{ genre.name }}</span>
+      {% endfor %}
+    </p>
+    <p class="card-text">{{ book.description }}</p>
+  </div>
+  <hr />
+  <h4>Book Copies</h4>
+  <div>
+    {% for bookcopy in book.bookinstance_set.all %}
+    <div class="card mb-3">
+      <h5 class="card-header"><strong>Book ID: </strong>{{ bookcopy.id }}</h5>
+      <div class="card-body">
+        <p
+          class="card-text {% if bookcopy.status == 'a' %}badge bg-success {% elif bookcopy.status == 'm' %}badge bg-primary {% else %} badge bg-warning{% endif %}"
+        >
+          {{ bookcopy.get_status_display }}
+        </p>
+        {% if bookcopy.status != 'a' %}
+        <p><strong>Due Back:</strong> {{ bookcopy.due_back }}</p>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<p>Recently Viewed Books</p>
+{% for book in recently_viewed %}
+<a href='{% url "book-detail" book.id %}'>{{book.title}}</a>
+{% endfor %} 
+{% endblock content %}

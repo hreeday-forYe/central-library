@@ -18,7 +18,7 @@
   <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Central Library</a>
+        <a class="navbar-brand" href="{%url 'index'%}">Central Library</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -52,7 +52,7 @@
     </nav>
 
     <div class="container content-container">
-      {% block content %}{% endblock content %}
+      {% block content %}  {% endblock content %}
     </div>
 
     <!-- Footer -->
