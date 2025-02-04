@@ -44,6 +44,7 @@ class BookInstance(models.Model):
   ]
   status = models.CharField(max_length=1, choices=BOOK_STATUS_CHOICES, help_text="Staus of the each book", default='m')
   due_back = models.DateField()
+  #TODO: burrower = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True)
 
 class Author(models.Model):
   first_name = models.CharField(max_length=100, unique=True)

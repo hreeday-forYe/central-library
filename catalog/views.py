@@ -2,7 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import generic
 from .models import Book, BookInstance, Author, Genre
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+@login_required
 def index(request):
   '''View Function for the home page of our library'''
   '''Book.object.all() --> returns a query_set; It is like list but not exactly'''
@@ -28,7 +31,7 @@ def index(request):
 
   return render(request, 'index.html', context=payload)
 
-class BookListView(generic.ListView): #GET METHOD
+class BookListView(LoginRequiredMixin, generic.ListView): #GET METHOD
   '''This will query our database and get all the records of the books that are available and it will render the records in our book_list template it will assume it is present in our templates/catalog(appname)/book_list.html(model_list)'''
   model= Book
   # Context default name--> book_list -> (modelName)_list
@@ -46,6 +49,7 @@ class BookDetailView(generic.DetailView):
   3. template name over write
   4. context_object_name --> book_detail ()
   5. Custom query pani patahunu sakxam --> 
+  --> REST FRAMEWORK 
   '''
   model = Book
   template_name ='book_detail.html'
