@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import generic
 from .models import Book, BookInstance, Author, Genre
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 @login_required
@@ -74,3 +74,26 @@ class BookDetailView(generic.DetailView):
     recently_viewed_books_id = self.request.session['recently_viewed']
     context['recently_viewed'] =  Book.objects.filter(pk__in=recently_viewed_books_id)
     return context
+
+
+class BorrowedBooksListView(LoginRequiredMixin,generic.ListView):
+  model = BookInstance
+  template_name = 'my_books.html'
+  def get_queryset(self):
+    return (
+      BookInstance.objects.filter(borrower = self.request.user).filter(status__exact="l").order_by('due_back')
+    )
+  
+
+class AllBorrowedBooksListView(LoginRequiredMixin,  PermissionRequiredMixin, generic.ListView):
+  model = BookInstance
+  template_name='all_borrowed_books.html'
+  permission_required="catalog.can_mark_returned"
+
+  def get_queryset(self):
+    return (BookInstance.objects.filter(status='l').select_related('borrower'))
+  
+
+#TODO: IMPLEMENT THIS ONLY FOR LIBRIANS
+def markReturned(request):
+  pass

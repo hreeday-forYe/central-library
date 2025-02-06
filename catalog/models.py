@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
+from django.conf import settings
 # Create your models here.
 
 class Genre(models.Model):
@@ -33,6 +34,7 @@ class Book(models.Model):
   
   # display_genre.description = "genre"
 import uuid
+from datetime import date
 class BookInstance(models.Model):
   id = models.UUIDField( default=uuid.uuid4, primary_key=True, help_text='Unique id for the each book')
   book = models.ForeignKey(Book, on_delete=models.CASCADE)
@@ -44,7 +46,22 @@ class BookInstance(models.Model):
   ]
   status = models.CharField(max_length=1, choices=BOOK_STATUS_CHOICES, help_text="Staus of the each book", default='m')
   due_back = models.DateField()
-  #TODO: burrower = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True)
+  borrower = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL)
+
+  def __str__(self):
+    return f'{self.id}-{self.book.title}'
+  
+  class Meta:
+    ordering = ['due_back']
+    permissions = (('can_mark_returned', 'Set Book as returned'),)
+
+  @property
+  def is_overdue(self):
+    '''Check if the book instance borrowed is already overdue'''
+    # bool--> falsy value false true value True
+    return bool((self.due_back and date.today()) > self.due_back)
+
+
 
 class Author(models.Model):
   first_name = models.CharField(max_length=100, unique=True)

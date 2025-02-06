@@ -12,8 +12,6 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-    {% load static %}
-    <link rel="stylesheet" href="{{'css/styles.css'}}" />
   </head>
   <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -47,6 +45,15 @@
               <a class="nav-link" href="#">All Authors</a>
             </li>
             {% if user.is_authenticated %}
+              {% if perms.catalog.can_mark_returned %}
+                <li class="nav-item">
+                  <a href="{%url 'all-borrowed-books'%}" class="nav-link">All Borrowed Books</a>
+                </li>  
+              {% else %}
+              <li class="nav-item">
+                <a href="{%url 'my-books'%}" class="nav-link">My Borrowed Books</a>
+              </li>
+              {% endif %}
             <li class="nav-item">
               <a href="" class="nav-link text-warning">User: {{user.get_username}}</a>
             </li>

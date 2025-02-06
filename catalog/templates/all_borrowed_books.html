@@ -1,0 +1,26 @@
+{% extends "layout.html" %} {% block content %}
+<h2>All Borrowed Books</h2>
+<ul class="list-group">
+  {% if bookinstance_list %} {% for bookinst in bookinstance_list %}
+  <li class="list-group-item">
+    <h5>
+      <a href="{%url 'book-detail' bookinst.book.pk%}">
+        {{bookinst.book.title}}
+      </a>
+      {{bookinst.borrower.username}}
+    </h5>
+    Due Back:
+    <span class="{% if bookinst.is_overdue %} text-danger {% endif %}"
+      >{{bookinst.due_back}}</span
+    >
+    <p>
+      <a href="{%url 'mark-return' bookinst.pk %}" class="btn btn-secondary btn-sm">
+        Mark as Returned
+      </a>
+    </p>
+  </li>
+  {% endfor %} {% else %}
+  <h6>There are no borrowed books</h6>
+  {% endif %}
+</ul>
+{% endblock content %}
