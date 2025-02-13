@@ -7,6 +7,8 @@ name = "pypi"
 django = "*"
 python-decouple = "*"
 mysqlclient = "*"
+django-crispy-forms = "*"
+crispy-bootstrap4 = "*"
 
 [dev-packages]
 

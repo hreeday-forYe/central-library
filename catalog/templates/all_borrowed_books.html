@@ -18,9 +18,16 @@
         Mark as Returned
       </a>
     </p>
+    <p>
+      <a href="{%url 'renew-book' bookinst.pk %}" class="btn btn-warning btn-sm">
+        Renew Date
+      </a>
+    </p>
   </li>
   {% endfor %} {% else %}
   <h6>There are no borrowed books</h6>
   {% endif %}
 </ul>
 {% endblock content %}
+
+

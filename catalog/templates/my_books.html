@@ -9,7 +9,7 @@
         {{bookinst.book.title}}
       </a>
     </h5>
-    Due Back: <span class="{% if bookinst.is_overdue %} text-danger {% endif %}" >{{bookinst.due_back}}</span>
+    Due Back: <span class="{% if bookinst.is_overdue %} text-danger {% endif %}" >{{bookinst.due_back}} {% if bookinst.is_overdue %} - Date is overdue please return the book else you are fined Rs.20 per day {% endif %} </span>
   </li>
   {% endfor %} {% else %}
   <h6>You have not borrowed any Books</h6>

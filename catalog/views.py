@@ -1,9 +1,9 @@
-from django.shortcuts import render 
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views import generic
 from .models import Book, BookInstance, Author, Genre
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 # Create your views here.
 @login_required
 def index(request):
@@ -12,7 +12,6 @@ def index(request):
   total_books = Book.objects.all().count()
   total_books_copies = BookInstance.objects.all().count()
   total_authors = Author.objects.all().count()
-  
   # Book instance avaialble count 
   book_instance_available_count = BookInstance.objects.filter(status__exact = 'a').count()
   
@@ -38,7 +37,7 @@ class BookListView(LoginRequiredMixin, generic.ListView): #GET METHOD
   template_name = 'book_list.html' #templates->catalog(appname)->book_list.html
   # def get_queryset(self):
   #   super().get_queryset()
-  paginate_by= 1
+  paginate_by= 3
   # Data 
   # context_object_name = 'book_list'
 
@@ -97,3 +96,72 @@ class AllBorrowedBooksListView(LoginRequiredMixin,  PermissionRequiredMixin, gen
 #TODO: IMPLEMENT THIS ONLY FOR LIBRIANS
 def markReturned(request):
   pass
+
+'''
+Image handling --> 2 class
+blog --> 
+rest framework --> 2 class
+6 class 
+social media --> 
+deployment --> 
+'''
+from .forms import RenewBookModelForm
+import datetime
+from django.http import HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
+@login_required
+@permission_required("catalog.can_mark_returned")
+def renew_book(request, pk):
+  book_instance = get_object_or_404(BookInstance, pk=pk)
+  if request.method == "POST":
+    form = RenewBookModelForm(request.POST)
+
+    if form.is_valid():
+      book_instance.due_back = form.cleaned_data['renewal_date']
+      book_instance.save()
+      return HttpResponseRedirect(reverse('all-borrowed-books'))
+  else:
+    new_renewal_date = datetime.date.today() + datetime.timedelta(weeks=2)
+    # DEfault value for the new dae
+    form = RenewBookModelForm(initial={'renewal_date': new_renewal_date})
+  context = {
+    'form': form,
+    'book_instance': book_instance,
+  }
+  return render(request, "book_renew_form.html",context)
+
+class BookCreate(PermissionRequiredMixin, generic.CreateView):
+  model = Book
+  permission_required ="catalog.add_book"
+  fields = ['title', 'author', 'description','genre','language','isbn' ]
+  template_name = "book_form.html"
+  initial = {'language':"english"}
+  
+  def get_success_url(self):
+      return reverse('book-list')
+  
+class BookUpdate(PermissionRequiredMixin, generic.UpdateView):
+  model = Book
+  permission_required = 'catalog.change_book'
+  fields = ['title', 'author', 'description','genre','language','isbn' ]
+  template_name = 'book_form.html'
+
+
+class BookDelete(PermissionRequiredMixin, generic.DeleteView):
+  model = Book
+  permission_required= "catalog.delete_book"
+  template_name = "book_deleted.html"
+  success_url = reverse_lazy("book-list")
+  def form_valid(self, form):
+      try:
+        self.object.delete()
+        return HttpResponseRedirect(self.success_url)
+      except Exception as e:
+        return HttpResponseRedirect(
+          reverse('book-delete', kwargs={"pk": self.object.pk} )
+        )
+
+  
+
+
+

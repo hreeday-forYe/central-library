@@ -1,4 +1,7 @@
-{% extends "layout.html" %} {% block content %}
+{% extends "layout.html" %} {% block content %} {% if perms.catalog.add_book %}
+<a href="{%url 'book-create'%}" class="btn btn-primary my-2">Add a New Book</a>
+{% endif %}
+
 <div class="card" style="width: 25rem">
   <div class="card-header">Overview</div>
   <ul class="list-group list-group-flush">
@@ -10,7 +13,17 @@
       </strong>
       <br />
       <em>Author: {{book.author}}</em>
+      <br />
+      {% if perms.catalog.delete_book %}
+      <a href="{%url 'book-delete' book.id%}" class="btn btn-danger btn-sm my-2"
+        >Delete Book</a
+      >
+      <a href="{%url 'book-update' book.id%}" class="btn btn-warning btn-sm my-2"
+        >Edit Book</a
+      >
+      {% endif %}
     </li>
+
     {% endfor %}
   </ul>
   <br />
